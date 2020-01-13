@@ -79,9 +79,6 @@ class TwitterClient(object):
                 # saving id of tweet
                 parsed_tweet['id'] = tweet.id
 
-                # saving location of tweet
-                # parsed_tweet['location'] = tweet.
-
                 # appending parsed tweet to tweets list
                 if tweet.retweet_count > 0:
                     # if tweet has retweets, ensure that it is appended only once
@@ -110,7 +107,7 @@ def main():
     print(start_time)
     last_id=0
     loop = 0
-    csvtitle = 'Data/Tweets_1.csv'
+    csvtitle = 'Tweets_1.csv'
     title_iterator = 1
 
     while True:
@@ -176,7 +173,7 @@ def main():
         upload_time_passed = time.time() - upload_timer
         if upload_time_passed > twentyfourhours:
             upload_timer = time.time()  # reset to 0 seconds
-            csvtitle = 'Data/Tweets_' + str(title_iterator) + '.csv'  # next title
+            csvtitle = 'Tweets_' + str(title_iterator) + '.csv'  # next title
             title_iterator = title_iterator + 1
 
         # wait 5 minutes and repeat
