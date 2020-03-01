@@ -1,3 +1,5 @@
+Adapted from AnnaBermbaum
+
 import re
 import tweepy
 from tweepy import OAuthHandler
@@ -5,7 +7,6 @@ from textblob import TextBlob
 import csv
 import time
 import pandas as pd
-import csv
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 
@@ -35,15 +36,12 @@ class TwitterClient(object):
         except:
             print("Error: Authentication Failed")
 
-    def clean_tweet(self, tweet):
-        #  Utility function to clean tweet text by removing links, special characters using simple regex statements.
-        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
 
     def get_tweet_sentiment(self, tweet):
         # Utility function to classify sentiment of passed tweet using textblob's sentiment method
 
         # create TextBlob object of passed tweet text
-        analysis = TextBlob(self.clean_tweet(tweet))
+        analysis = TextBlob(tweet)
         # set sentiment
         if analysis.sentiment.polarity > 0:
             return 'positive'
@@ -54,9 +52,7 @@ class TwitterClient(object):
 
 
     def get_tweets(self, query, geocode, since_id, count=10):
-        #  Main function to fetch tweets and parse them.
 
-        # empty list to store parsed tweets
         tweets = []
         tweet_text=[]
 
@@ -67,7 +63,6 @@ class TwitterClient(object):
             # parsing tweets one by one
             for tweet in fetched_tweets:
 
-                # empty dictionary to store required params of a tweet
                 parsed_tweet = {}
 
                 # saving text of tweet
@@ -120,16 +115,14 @@ def main():
         GOOGLdata_ts, GOOGLmeta_data_ts = ts.get_intraday(symbol='GOOGL', interval='5min', outputsize='full')
         print(GOOGLmeta_data_ts)
 
-        GOOGLdata_ti, GOOGLmeta_data_ti = ti.get_sma(symbol='GOOGL', interval='5min',
-                                            time_period=period, series_type='close')
+        GOOGLdata_ti, GOOGLmeta_data_ti = ti.get_sma(symbol='GOOGL', interval='5min',time_period=period, series_type='close')
         GOOGLdf1 = GOOGLdata_ti
         GOOGLdf2 = GOOGLdata_ts['4. close'].iloc[period-1::]
 
         EBAYdata_ts, EBAYmeta_data_ts = ts.get_intraday(symbol='EBAY', interval='5min', outputsize='full')
         print(EBAYmeta_data_ts)
 
-        EBAYdata_ti, EBAYmeta_data_ti = ti.get_sma(symbol='EBAY', interval='5min',
-                                            time_period=period, series_type='close')
+        EBAYdata_ti, EBAYmeta_data_ti = ti.get_sma(symbol='EBAY', interval='5min',time_period=period, series_type='close')
         EBAYdf1 = EBAYdata_ti
         EBAYdf2 = EBAYdata_ts['4. close'].iloc[period-1::]
 
