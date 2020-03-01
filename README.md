@@ -1,6 +1,6 @@
 # SENSING
 
-COURSEWORK1.py was run on raspeberry pi to produce datasets at intervals
+COURSEWORK1.py was run on raspeberry pi to produce datasets in csv file
 
 csv files attached are the collected datasets
 
