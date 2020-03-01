@@ -1,3 +1,5 @@
+'''Adapted from Data Scientist @ Zeptolab, lecturer in the Center of Mathematical Finance in MSU https://www.kaggle.com/kashnitsky/topic-9-part-1-time-series-analysis-in-python/notebook'''
+
 import warnings                                  # `do not disturbe` mode
 warnings.filterwarnings('ignore')
 
