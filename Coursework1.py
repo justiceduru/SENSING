@@ -1,4 +1,4 @@
-Adapted from AnnaBermbaum
+'''Adapted from @AnnaBermbaum on github'''
 
 import re
 import tweepy
