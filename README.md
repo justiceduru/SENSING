@@ -7,3 +7,7 @@ csv files attached are the collected datasets
 DA2.py produces data analytics visualisations
 
 web.py will produce actuation website
+
+video link
+https://youtu.be/Q-2MMZCNAlg
+
