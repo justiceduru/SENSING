@@ -18,10 +18,10 @@ import scipy.stats as scs
 from itertools import product                    # some useful functions
 from tqdm import tqdm_notebook
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression, LassoCV
+from sklearn.linear_model import LinearRegression, LassoCV, RidgeCV
 from sklearn.model_selection import cross_val_score, TimeSeriesSplit
 scaler = StandardScaler()
-
+from sklearn.externals import joblib
 
 #%matplotlib inline
 
@@ -85,30 +85,10 @@ def prepareData(series, lag_start, lag_end, test_size, target_encoding=False):
 
     # lags of series
     for i in range(lag_start, lag_end):
-        data["lag_{}".format(i)] = data.y.shift(i)
+        data["lag_{}".format(i)] = data.y.shift(-i)
 
     # datetime features
     data.index = pd.to_datetime(data.index)
-    data["hour"] = data.index.hour
-    data["weekday"] = data.index.weekday
-    data['is_weekend'] = data.weekday.isin([5,6])*1
-
-    def code_mean(data, cat_feature, real_feature):
-        """
-        Returns a dictionary where keys are unique categories of the cat_feature,
-        and values are means over real_feature
-        """
-        return dict(data.groupby(cat_feature)[real_feature].mean())
-
-    if target_encoding:
-        # calculate averages on train set only
-        test_index = int(len(data.dropna())*(1-test_size))
-        data['weekday_average'] = list(map(code_mean(data[:test_index], 'weekday', "y").get, data.weekday))
-        data["hour_average"] = list(map(code_mean(data[:test_index], 'hour', "y").get, data.hour))
-
-        # frop encoded variables
-        data.drop(["hour", "weekday"], axis=1, inplace=True)
-
     # train-test split
     y = data.dropna().y
     X = data.dropna().drop(['y'], axis=1)
@@ -132,7 +112,7 @@ def prepareData(series, lag_start, lag_end, test_size, target_encoding=False):
 
     return X_train, X_test, y_train, y_test
 
-X_train, X_test, y_train, y_test = prepareData(Stock.GOOGLClose, lag_start=6, lag_end=25, test_size=0.3, target_encoding=True)
+X_train, X_test, y_train, y_test = prepareData(Stock.EBAYClose, lag_start=6, lag_end=25, test_size=0.3, target_encoding=True)
 
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
@@ -148,6 +128,14 @@ sns.heatmap(X_train.corr());
 tscv = TimeSeriesSplit(n_splits=3)
 lasso = LassoCV(cv=tscv)
 lasso.fit(X_train_scaled, y_train)
+
+ridge = RidgeCV(cv=tscv)
+ridge.fit(X_train_scaled, y_train)
+
+
+joblib_file = "ML_Model3.pkl"
+#joblib.dump(lr, joblib_file)
+
 def plotModelResults(model, X_train=X_train, X_test=X_test, plot_intervals=False, plot_anomalies=False):
     """
         Plots modelled vs fact values, prediction intervals and anomalies
